@@ -13,10 +13,13 @@ public:
     virtual ~Player() = default;
 
     // Method for sending a message
-    virtual void Send(const std::string& message) = 0;
-    
+    void Send(const std::string& message) {
+        communicator_->Push(role_, message); // Use the communicator to send the message
+    }
     // Method for receiving a message
-    virtual std::string Receive() = 0;
+    std::string Receive() {
+        return communicator_->Pop(role_); // Use the communicator to receive the message
+    }
 
     // Function to process 10 messages in a loop, "Main" business logic
     void Run() {

@@ -8,10 +8,6 @@ add_executable(PlayerComm
     src/main.cpp
     src/Communicator.h
     src/Player.h
-    src/ThreadPlayer.h
-    src/ThreadPlayer.cpp
-    src/ProcessPlayer.h
-    src/ProcessPlayer.cpp
     src/PipeCommunicator.h
     src/PipeCommunicator.cpp
     src/QueueCommunicator.h

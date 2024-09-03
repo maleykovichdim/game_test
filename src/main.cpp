@@ -1,5 +1,3 @@
-#include "ThreadPlayer.h"
-#include "ProcessPlayer.h"
 #include "PipeCommunicator.h"
 #include "QueueCommunicator.h"
 #include <iostream>
@@ -7,17 +5,18 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <future>
+#include "Player.h"
 
 // Function to run players in threads using a QueueCommunicator
 void runThreadPlayers() {
     QueueCommunicator communicator; // Use QueueCommunicator for thread mode
 
-    ThreadPlayer player1(Role::INITIATOR, &communicator); // Initiator player
-    ThreadPlayer player2(Role::RECEIVER, &communicator); // Receiver player
+    Player player1(Role::INITIATOR, &communicator); // Initiator player
+    Player player2(Role::RECEIVER, &communicator); // Receiver player
 
     // Start both players asynchronously
-    auto future1 = std::async(&ThreadPlayer::Run, &player1); // Start the initiator in a new thread
-    auto future2 = std::async(&ThreadPlayer::Run, &player2); // Start the receiver in a new thread
+    auto future1 = std::async(&Player::Run, &player1); // Start the initiator in a new thread
+    auto future2 = std::async(&Player::Run, &player2); // Start the receiver in a new thread
 
     // Wait for both players to finish
     future1.get(); // Wait for the initiator to finish
@@ -30,11 +29,11 @@ void runProcessPlayers() {
     pid_t pid = fork(); // Create a new process
 
     if (pid == 0) { // Child process (Initiator)
-        ProcessPlayer initiator(Role::INITIATOR, &communicator);
+        Player initiator(Role::INITIATOR, &communicator);
         initiator.Run();
         exit(0);
     } else if (pid > 0) { // Parent process (Receiver)
-        ProcessPlayer receiver(Role::RECEIVER, &communicator);
+        Player receiver(Role::RECEIVER, &communicator);
         receiver.Run();
         wait(nullptr); // Wait for child process to finish
         communicator.Close();
